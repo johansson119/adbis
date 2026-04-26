@@ -2,20 +2,105 @@
 <html>
 <head>
   <title>Service Report</title>
+  <link rel="stylesheet" href="/report.css">
 </head>
 
 <body>
 
-<h1>Service Report</h1>
+<div class="report-page">
 
-<p>Task ID: <span id="taskId"></span></p>
+    <div class="report-header">
+        <div class="header-left">
+          <button class="back-btn" onclick="goBack()">Back</button>
+          <h1>SERVICE REPORT</h1>
+        </div>
+      
+        <button class="save-btn">Save Draft</button>
+      </div>
+
+  <!-- INFO BOX -->
+  <div class="report-info">
+    <div>
+      <p class="label">Report ID</p>
+      <p>SR-<span id="taskId"></span></p>
+    </div>
+
+    <div>
+      <p class="label">Task</p>
+      <p id="title"></p>
+    </div>
+
+    <div>
+      <p class="label">Customer</p>
+      <p id="customer"></p>
+    </div>
+
+    <div>
+      <p class="label">Technician</p>
+      <p id="technician"></p>
+    </div>
+  </div>
+
+  <!-- ISSUE -->
+  <div class="report-card">
+    <h3>Issue Description</h3>
+    <textarea placeholder="Describe the problem..."></textarea>
+  </div>
+
+  <!-- SOLUTION -->
+  <div class="report-card">
+    <h3>Solution Implemented</h3>
+    <textarea placeholder="Describe the work performed..."></textarea>
+  </div>
+
+    <!-- Billeder -->
+  <div class="image-upload-section">
+
+    <div class="image-box">
+      <p>Before Photo</p>
+      <label class="upload-box">
+        <img src="/camera.png" alt="upload">
+        <input type="file" hidden>
+      </label>
+    </div>
+  
+    <div class="image-box">
+      <p>After Photo</p>
+      <label class="upload-box">
+        <img src="/camera.png" alt="upload">
+        <input type="file" hidden>
+      </label>
+    </div>
+  
+  </div>
+
+  <!-- TIME -->
+  <div class="report-card">
+    <h3>Time Spent</h3>
+    <input type="number" placeholder="Minutes">
+  </div>
+
+  <!-- ACTION -->
+  <button class="submit-btn">Submit Report</button>
+
+</div>
 
 <script>
-  // Henter id fra URL (?id=...)
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
-  document.getElementById("taskId").innerText = id;
+  function goBack() {
+  window.location.href = "/";
+}
+
+  fetch("/tasks/" + id)
+    .then(res => res.json())
+    .then(task => {
+      document.getElementById("taskId").innerText = task.id;
+      document.getElementById("title").innerText = task.title;
+      document.getElementById("customer").innerText = task.customer;
+      document.getElementById("technician").innerText = task.technician_name;
+    });
 </script>
 
 </body>

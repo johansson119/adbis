@@ -16,6 +16,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
+      customer TEXT,
       date TEXT NOT NULL,
       skill_required TEXT NOT NULL,
       start_time TEXT,
@@ -56,14 +57,14 @@ db.get("SELECT COUNT(*) as count FROM technicians", (err, row) => {
   
       //Opgaver
       db.run(`
-        INSERT INTO tasks (title, date, skill_required, start_time, end_time, priority, status, technician_id) VALUES
-        ("Fix pump leakage", "2026-04-26", "Repair", "08:00", NULL, "URGENT", "NOT STARTED", 1),
-        ("Inspect heat exchanger", "2026-04-26", "Inspection (DCI)", "09:00", NULL, "NORMAL", "IN PROGRESS", 2),
-        ("Weld broken pipe", "2026-04-26", "Welding", NULL, NULL, "URGENT", "NOT STARTED", 3),
-        ("Chemical cleaning tank", "2026-04-27", "Chemical Cleaning", NULL, NULL, "LOW", "NOT STARTED", 4),
-        ("System pressure test", "2026-04-27", "Testing", NULL, NULL, "NORMAL", "NOT STARTED", 5),
-        ("Replace worn seal on pump", "2026-04-27", "Repair", NULL, NULL, "LOW", "NOT STARTED", 1),
-        ("Fix leaking valve connection", "2026-04-28", "Repair", NULL, NULL, "NORMAL", "IN PROGRESS", 1)
+        INSERT INTO tasks (title, customer, date, skill_required, start_time, end_time, priority, status, technician_id) VALUES
+        ("Fix pump leakage", "ARLA", "2026-04-26", "Repair", "08:00", NULL, "URGENT", "NOT STARTED", 1),
+        ("Inspect heat exchanger", "NOVO NORDISK", "2026-04-26", "Inspection (DCI)", "09:00", NULL, "NORMAL", "IN PROGRESS", 2),
+        ("Weld broken pipe", "EQUINOR", "2026-04-26", "Welding", NULL, NULL, "URGENT", "NOT STARTED", 3),
+        ("Chemical cleaning tank", "OATLY", "2026-04-27", "Chemical Cleaning", NULL, NULL, "LOW", "NOT STARTED", 4),
+        ("System pressure test", "COLOPLAST", "2026-04-27", "Testing", NULL, NULL, "NORMAL", "NOT STARTED", 5),
+        ("Replace worn seal on pump", "NUTRICIA", "2026-04-27", "Repair", NULL, NULL, "LOW", "NOT STARTED", 1),
+        ("Fix leaking valve connection", "NOVO NORDISK", "2026-04-28", "Repair", NULL, NULL, "NORMAL", "IN PROGRESS", 1)
       `);
   
       //Servicerapporter (kun 1-2 så det ser realistisk ud)
