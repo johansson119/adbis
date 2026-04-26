@@ -1,36 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ordreoversigt</title>
+    <link rel="stylesheet" href="/style.css">
+  <title>Work Order Queue</title>
 </head>
+
 <body>
 
-  <h1>Ordreoversigt</h1>
+<h1>Work Order Queue</h1>
 
-  <h3>Filtrer</h3>
-  <button>Alle</button>
-  <button>I gang</button>
-  <button>Afsluttet</button>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Task Description</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Oprettet</th>
+      <th>Servicerapport</th>
+    </tr>
+  </thead>
 
-  <hr>
+  <tbody id="tasks"></tbody>
+</table>
 
-  <h2>Ordre</h2>
+<script>
+fetch("/tasks")
+  .then(res => res.json())
+  .then(tasks => {
+    const tbody = document.getElementById("tasks");
 
-  <div>
-    <h3>Ordre #1234gfgergerg</h3>
-    <p>Kunde: Arla</p>
-    <p>Status: Ikke startet</p>
-    <button>Opret opgave</button>
-  </div>
+    tasks.forEach(task => {
+      const row = document.createElement("tr");
 
-  <hr>
+      // priority class
+      let priorityClass = "";
+      if (task.priority === "Høj") priorityClass = "priority-high";
+      if (task.priority === "Mellem") priorityClass = "priority-medium";
 
-  <div>
-    <h3>Ordre #5678</h3>
-    <p>Kunde: Carlsberg</p>
-    <p>Status: I gang</p>
-    <button>Se opgave</button>
-  </div>
+      row.innerHTML = `
+        <td>WO-${task.id}</td>
+
+        <td>
+          <strong>${task.title}</strong><br>
+          <small>${task.skill_required}</small>
+        </td>
+
+        <td class="${priorityClass}">
+          ${task.priority}
+        </td>
+
+        <td>
+          <span class="status">${task.status}</span>
+        </td>
+
+        <td>${task.date}</td>
+
+        <td>
+          <button onclick="goToTask(${task.id})">
+            VIEW DETAILS
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(row);
+    });
+  });
+
+function goToTask(id) {
+  window.location.href = "/task.html?id=" + id;
+}
+</script>
 
 </body>
 </html>
