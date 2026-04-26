@@ -57,11 +57,13 @@ db.get("SELECT COUNT(*) as count FROM technicians", (err, row) => {
       //Opgaver
       db.run(`
         INSERT INTO tasks (title, date, skill_required, start_time, end_time, priority, status, technician_id) VALUES
-        ("Fix pump leakage", "2026-04-26", "Repair", "08:00", NULL, "Høj", "Ikke startet", 1),
-        ("Inspect heat exchanger", "2026-04-26", "Inspection (DCI)", "09:00", NULL, "Mellem", "I gang", 2),
-        ("Weld broken pipe", "2026-04-26", "Welding", NULL, NULL, "Høj", "Ikke startet", 3),
-        ("Chemical cleaning tank", "2026-04-27", "Chemical Cleaning", NULL, NULL, "Lav", "Ikke startet", 4),
-        ("System pressure test", "2026-04-27", "Testing", NULL, NULL, "Mellem", "Ikke startet", 5)
+        ("Fix pump leakage", "2026-04-26", "Repair", "08:00", NULL, "URGENT", "NOT STARTED", 1),
+        ("Inspect heat exchanger", "2026-04-26", "Inspection (DCI)", "09:00", NULL, "NORMAL", "IN PROGRESS", 2),
+        ("Weld broken pipe", "2026-04-26", "Welding", NULL, NULL, "URGENT", "NOT STARTED", 3),
+        ("Chemical cleaning tank", "2026-04-27", "Chemical Cleaning", NULL, NULL, "LOW", "NOT STARTED", 4),
+        ("System pressure test", "2026-04-27", "Testing", NULL, NULL, "NORMAL", "NOT STARTED", 5),
+        ("Replace worn seal on pump", "2026-04-27", "Repair", NULL, NULL, "LOW", "NOT STARTED", 1),
+        ("Fix leaking valve connection", "2026-04-28", "Repair", NULL, NULL, "NORMAL", "IN PROGRESS", 1)
       `);
   
       //Servicerapporter (kun 1-2 så det ser realistisk ud)

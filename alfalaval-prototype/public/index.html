@@ -16,8 +16,8 @@
       <th>Task Description</th>
       <th>Priority</th>
       <th>Status</th>
-      <th>Oprettet</th>
-      <th>Servicerapport</th>
+      <th>Created</th>
+      <th>Service report</th>
     </tr>
   </thead>
 
@@ -33,10 +33,14 @@ fetch("/tasks")
     tasks.forEach(task => {
       const row = document.createElement("tr");
 
+
+
       // priority class
       let priorityClass = "";
-      if (task.priority === "Høj") priorityClass = "priority-high";
-      if (task.priority === "Mellem") priorityClass = "priority-medium";
+
+        if (task.priority === "URGENT") priorityClass = "priority-high";
+        if (task.priority === "NORMAL") priorityClass = "priority-medium";
+        if (task.priority === "LOW") priorityClass = "priority-low";
 
       row.innerHTML = `
         <td>WO-${task.id}</td>
@@ -58,7 +62,7 @@ fetch("/tasks")
 
         <td>
           <button onclick="goToTask(${task.id})">
-            VIEW DETAILS
+            Open report
           </button>
         </td>
       `;

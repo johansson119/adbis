@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Service Report</title>
+</head>
+
+<body>
+
+<h1>Service Report</h1>
+
+<p>Task ID: <span id="taskId"></span></p>
+
+<script>
+  // Henter id fra URL (?id=...)
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  document.getElementById("taskId").innerText = id;
+</script>
+
+</body>
+</html>

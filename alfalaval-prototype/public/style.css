@@ -36,6 +36,10 @@ body {
   .priority-medium {
     color: orange;
   }
+
+  .priority-low {
+    color: green;
+  }
   
   .status {
     padding: 4px 8px;
