@@ -14,9 +14,9 @@
           <button class="back-btn" onclick="goBack()">Back</button>
           <h1>SERVICE REPORT</h1>
         </div>
-      
-        <button class="save-btn">Save Draft</button>
+        <button class="start-btn" onclick="startTask()">Start Task</button>
       </div>
+      
 
   <!-- INFO BOX -->
   <div class="report-info">
@@ -44,13 +44,13 @@
   <!-- ISSUE -->
   <div class="report-card">
     <h3>Issue Description</h3>
-    <textarea placeholder="Describe the problem..."></textarea>
+    <textarea id="problemDescription" placeholder="Describe the problem..."></textarea>
   </div>
 
   <!-- SOLUTION -->
   <div class="report-card">
     <h3>Solution Implemented</h3>
-    <textarea placeholder="Describe the work performed..."></textarea>
+    <textarea id="workPerformed" placeholder="Describe the work performed..."></textarea>
   </div>
 
     <!-- Billeder -->
@@ -77,11 +77,14 @@
   <!-- TIME -->
   <div class="report-card">
     <h3>Time Spent</h3>
-    <input type="number" placeholder="Minutes">
+    <p><span id="time">0</span> min</p>
   </div>
 
   <!-- ACTION -->
-  <button class="submit-btn">Submit Report</button>
+  <div class="action-buttons">
+    <button class="save-btn">Save Draft</button>
+    <button class="submit-btn" onclick="submitReport()">Submit Report</button>
+  </div>
 
 </div>
 
@@ -93,14 +96,55 @@
   window.location.href = "/";
 }
 
-  fetch("/tasks/" + id)
+fetch("/tasks/" + id)
+  .then(res => res.json())
+  .then(task => {
+    document.getElementById("taskId").innerText = task.id;
+    document.getElementById("title").innerText = task.title;
+    document.getElementById("customer").innerText = task.customer;
+    document.getElementById("technician").innerText = task.technician_name;
+
+    if (task.start_time) {
+      let startTime = new Date(task.start_time).getTime();
+
+      setInterval(() => {
+        let now = Date.now();
+        let diff = Math.floor((now - startTime) / 60000);
+
+        document.getElementById("time").innerText = diff;
+      }, 1000);
+    }
+  });
+
+function startTask() {
+  fetch("/tasks/" + id + "/start", {
+    method: "POST"
+  })
     .then(res => res.json())
-    .then(task => {
-      document.getElementById("taskId").innerText = task.id;
-      document.getElementById("title").innerText = task.title;
-      document.getElementById("customer").innerText = task.customer;
-      document.getElementById("technician").innerText = task.technician_name;
+    .then(data => {
+      console.log("Started at:", data.start_time);
+      location.reload();
     });
+}
+
+function submitReport() {
+  fetch("/tasks/" + id + "/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      problem_description: document.getElementById("problemDescription").value,
+      work_performed: document.getElementById("workPerformed").value,
+      images: ""
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert("Report submitted. Time spent: " + data.time_spent + " minutes");
+      window.location.href = "/";
+    });
+}
 </script>
 
 </body>

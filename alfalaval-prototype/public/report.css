@@ -15,7 +15,7 @@ body {
   .report-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 30px;
   }
 
@@ -26,7 +26,9 @@ body {
   }
   
   .back-btn {
-    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
   }
   
   .report-info {
@@ -63,7 +65,9 @@ body {
   }
   
   .save-btn {
-    padding: 10px 15px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
   }
   
   .submit-btn {
@@ -71,6 +75,8 @@ body {
     background: black;
     color: white;
     border: none;
+    border-radius: 8px;
+    cursor: pointer;
   }
 
   .image-upload-section {
@@ -96,4 +102,22 @@ body {
   .upload-box img {
     width: 150px;
     opacity: 0.6;
+  }
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end; /* skubber til højre */
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .start-btn {
+    padding: 12px 20px;
+    background: white;
+    border: 1px solid #222;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 20px;
+    background-color: green;
+    color: white;
   }
