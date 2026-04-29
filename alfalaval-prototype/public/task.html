@@ -82,20 +82,23 @@
 
   <!-- ACTION -->
   <div class="action-buttons">
-    <button class="save-btn">Save Draft</button>
+    <button class="save-btn" onclick="saveDraft()">Save Draft</button>
     <button class="submit-btn" onclick="submitReport()">Submit Report</button>
   </div>
 
 </div>
 
 <script>
+  // Henter task id fra URL
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
+  // Går tilbage til forsiden
   function goBack() {
   window.location.href = "/";
 }
 
+// Henter opgave data og starter live timer hvis opgaven er startet
 fetch("/tasks/" + id)
   .then(res => res.json())
   .then(task => {
@@ -116,6 +119,7 @@ fetch("/tasks/" + id)
     }
   });
 
+// Starter opgaven og gemmer starttid i databasen
 function startTask() {
   fetch("/tasks/" + id + "/start", {
     method: "POST"
@@ -127,6 +131,7 @@ function startTask() {
     });
 }
 
+// Afslutter opgaven, beregner tid og gemmer servicerapport
 function submitReport() {
   fetch("/tasks/" + id + "/submit", {
     method: "POST",
@@ -143,6 +148,24 @@ function submitReport() {
     .then(data => {
       alert("Report submitted. Time spent: " + data.time_spent + " minutes");
       window.location.href = "/";
+    });
+}
+
+// Gemmer servicerapport og sætter opgaven til IN PROGRESS
+function saveDraft() {
+  fetch("/tasks/" + id + "/save-draft", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      problem_description: document.getElementById("problemDescription").value,
+      work_performed: document.getElementById("workPerformed").value
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert("Draft saved!");
     });
 }
 </script>

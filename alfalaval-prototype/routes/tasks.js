@@ -93,4 +93,34 @@ router.get("/:id", (req, res) => {
     });
   });
 
+  // gemmer draft + sætter task til IN PROGRESS
+router.post("/:id/save-draft", (req, res) => {
+    const taskId = req.params.id;
+    const { problem_description, work_performed } = req.body;
+  
+    const now = new Date().toISOString();
+  
+    db.run(
+      `
+      INSERT INTO service_reports 
+      (task_id, problem_description, work_performed, date_submitted)
+      VALUES (?, ?, ?, ?)
+      `,
+      [taskId, problem_description, work_performed, now],
+      function (err) {
+        if (err) return res.status(500).json(err);
+  
+        db.run(
+          "UPDATE tasks SET status = ? WHERE id = ?",
+          ["IN PROGRESS", taskId],
+          function (err) {
+            if (err) return res.status(500).json(err);
+  
+            res.json({ message: "Draft saved" });
+          }
+        );
+      }
+    );
+  });
+
 module.exports = router;

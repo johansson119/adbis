@@ -67,7 +67,7 @@ db.get("SELECT COUNT(*) as count FROM technicians", (err, row) => {
         ("Fix leaking valve connection", "NOVO NORDISK", "2026-04-28", "Repair", NULL, NULL, "NORMAL", "IN PROGRESS", 1)
       `);
   
-      //Servicerapporter (kun 1-2 så det ser realistisk ud)
+      //Servicerapporter 
       db.run(`
         INSERT INTO service_reports (task_id, problem_description, work_performed, images, date_submitted, time_spent) VALUES
         (2, "Fouling detected in exchanger", "Performed inspection and partial cleaning", "img1.jpg", "2026-04-26", 120)
