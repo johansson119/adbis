@@ -121,3 +121,16 @@ body {
     background-color: green;
     color: white;
   }
+
+  .pause-btn {
+    padding: 12px 20px;
+    background: white;
+    border: 1px solid #222;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 20px;
+    margin-left: 780px;
+    background-color: orange;
+    color: white;
+  }

@@ -21,6 +21,7 @@ db.serialize(() => {
       skill_required TEXT NOT NULL,
       start_time TEXT,
       end_time TEXT,
+      total_time INTEGER DEFAULT 0,
       priority TEXT NOT NULL,
       status TEXT NOT NULL,
       technician_id INTEGER,

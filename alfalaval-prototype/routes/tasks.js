@@ -55,45 +55,55 @@ router.get("/:id", (req, res) => {
     );
   });
 
-  // Afslutter opgaven ved at beregne tidsforbrug, gemme servicerapporten og opdatere status til COMPLETED
-  router.post("/:id/submit", (req, res) => {
+// Afslutter opgaven ved at beregne samlet tidsforbrug, gemme servicerapporten og opdatere status til COMPLETED
+router.post("/:id/submit", (req, res) => {
     const taskId = req.params.id;
     const { problem_description, work_performed, images } = req.body;
   
     const endTime = new Date().toISOString();
   
-    db.get("SELECT start_time FROM tasks WHERE id = ?", [taskId], (err, task) => {
-      if (err) return res.status(500).send("Database error");
+    db.get(
+      "SELECT start_time, total_time FROM tasks WHERE id = ?",
+      [taskId],
+      (err, task) => {
+        if (err) return res.status(500).send("Database error");
   
-      const start = new Date(task.start_time);
-      const end = new Date(endTime);
-      const timeSpent = Math.round((end - start) / 60000);
+        let timeSpent = task.total_time || 0;
   
-      db.run(
-        `
-        INSERT INTO service_reports 
-        (task_id, problem_description, work_performed, images, date_submitted, time_spent)
-        VALUES (?, ?, ?, ?, ?, ?)
-        `,
-        [taskId, problem_description, work_performed, images, endTime, timeSpent]
-      );
+        if (task.start_time) {
+          const start = new Date(task.start_time);
+          const end = new Date(endTime);
+          const activeMinutes = Math.floor((end - start) / 60000);
   
-      db.run(
-        "UPDATE tasks SET end_time = ?, status = ? WHERE id = ?",
-        [endTime, "COMPLETED", taskId],
-        (err) => {
-          if (err) return res.status(500).send("Database error");
-  
-          res.json({
-            message: "Report submitted",
-            time_spent: timeSpent
-          });
+          timeSpent += activeMinutes;
         }
-      );
-    });
+  
+        db.run(
+          `
+          INSERT INTO service_reports 
+          (task_id, problem_description, work_performed, images, date_submitted, time_spent)
+          VALUES (?, ?, ?, ?, ?, ?)
+          `,
+          [taskId, problem_description, work_performed, images, endTime, timeSpent]
+        );
+  
+        db.run(
+          "UPDATE tasks SET end_time = ?, total_time = ?, status = ?, start_time = NULL WHERE id = ?",
+          [endTime, timeSpent, "COMPLETED", taskId],
+          (err) => {
+            if (err) return res.status(500).send("Database error");
+  
+            res.json({
+              message: "Report submitted",
+              time_spent: timeSpent
+            });
+          }
+        );
+      }
+    );
   });
 
-  // gemmer draft + sætter task til IN PROGRESS
+// gemmer draft + sætter task til IN PROGRESS
 router.post("/:id/save-draft", (req, res) => {
     const taskId = req.params.id;
     const { problem_description, work_performed } = req.body;
@@ -121,6 +131,46 @@ router.post("/:id/save-draft", (req, res) => {
         );
       }
     );
+  });
+
+// Henter seneste gemte draft/report for en opgave
+router.get("/:id/report", (req, res) => {
+    const taskId = req.params.id;
+  
+    db.get(
+      `
+      SELECT *
+      FROM service_reports
+      WHERE task_id = ?
+      ORDER BY id DESC
+      LIMIT 1
+      `,
+      [taskId],
+      (err, row) => {
+        if (err) return res.status(500).send("Database error");
+  
+        res.json(row || {});
+      }
+    );
+  });
+
+  // Pause Task – Beregn tidsforbrug indtil nu, opdater total_time og nulstil start_time
+  router.post("/:id/pause", (req, res) => {
+    const taskId = req.params.id;
+    const now = new Date();
+  
+    db.get("SELECT start_time, total_time FROM tasks WHERE id = ?", [taskId], (err, task) => {
+      const start = new Date(task.start_time);
+      const activeMinutes = Math.floor((now - start) / 60000);
+  
+      const newTotal = (task.total_time || 0) + activeMinutes;
+  
+      db.run(
+        "UPDATE tasks SET total_time = ?, start_time = NULL WHERE id = ?",
+        [newTotal, taskId],
+        () => res.json({ total_time: newTotal })
+      );
+    });
   });
 
 module.exports = router;

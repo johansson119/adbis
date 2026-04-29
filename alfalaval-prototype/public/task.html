@@ -14,6 +14,7 @@
           <button class="back-btn" onclick="goBack()">Back</button>
           <h1>SERVICE REPORT</h1>
         </div>
+        <button class="pause-btn" onclick="pauseTask()">Pause Task</button>
         <button class="start-btn" onclick="startTask()">Start Task</button>
       </div>
       
@@ -97,8 +98,8 @@
   function goBack() {
   window.location.href = "/";
 }
-
-// Henter opgave data og starter live timer hvis opgaven er startet
+// henter opgave data og viser det
+// starter tiden ved start og viser den samlet arbejdstid
 fetch("/tasks/" + id)
   .then(res => res.json())
   .then(task => {
@@ -107,15 +108,19 @@ fetch("/tasks/" + id)
     document.getElementById("customer").innerText = task.customer;
     document.getElementById("technician").innerText = task.technician_name;
 
-    if (task.start_time) {
+    let baseTime = task.total_time || 0;
+
+    if (task.start_time && !task.end_time) {
       let startTime = new Date(task.start_time).getTime();
 
       setInterval(() => {
         let now = Date.now();
-        let diff = Math.floor((now - startTime) / 60000);
+        let activeTime = Math.floor((now - startTime) / 60000);
 
-        document.getElementById("time").innerText = diff;
+        document.getElementById("time").innerText = baseTime + activeTime;
       }, 1000);
+    } else {
+      document.getElementById("time").innerText = baseTime;
     }
   });
 
@@ -168,6 +173,29 @@ function saveDraft() {
       alert("Draft saved!");
     });
 }
+
+// Henter seneste draft og sætter tekst ind i felterne
+fetch("/tasks/" + id + "/report")
+  .then(res => res.json())
+  .then(report => {
+    if (report.problem_description) {
+      document.getElementById("problemDescription").value = report.problem_description;
+    }
+
+    if (report.work_performed) {
+      document.getElementById("workPerformed").value = report.work_performed;
+    }
+  });
+
+  // Pauser opgaven, gemmer tiden og relaoder siden
+  function pauseTask() {
+  fetch("/tasks/" + id + "/pause", {
+    method: "POST"
+  })
+    .then(res => res.json())
+    .then(() => location.reload());
+}
+
 </script>
 
 </body>
