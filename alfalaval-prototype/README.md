@@ -5,7 +5,7 @@
 npm install
 npm install express
 npm install sqlite3
-node.server.js 
+node server.js 
 
 ### åben systemet: 
 http://localhost:3000
