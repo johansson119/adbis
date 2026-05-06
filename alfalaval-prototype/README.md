@@ -8,5 +8,8 @@ node server.js
 ### åben systemet: 
 localhost:3000
 
-
+#### åben database:
+CTRL + SHIFT + P 
+"Open Database"
+Nede i venstre hjørne dukker SQLITE Explorer op
 
